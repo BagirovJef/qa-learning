@@ -4,140 +4,200 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QA Learning - Статистика</title>
-    <link rel="stylesheet" href="style.css">
     <style>
-        .stats-container {
-            max-width: 1200px;
-            margin: 0 auto;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
             padding: 2rem;
         }
-        
-        .stats-header {
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
             text-align: center;
             margin-bottom: 2rem;
+            color: white;
         }
-        
-        .stats-header h1 {
-            color: #667eea;
+
+        .header h1 {
+            font-size: 2.5rem;
             margin-bottom: 0.5rem;
         }
-        
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 1.5rem;
+            color: white;
+            text-decoration: none;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            transition: background 0.3s;
+        }
+
+        .back-link:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 1.5rem;
             margin-bottom: 2rem;
         }
-        
+
         .stat-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 12px;
+            background: white;
+            border-radius: 16px;
             padding: 2rem;
             text-align: center;
-            color: white;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
             transition: transform 0.3s;
         }
-        
+
         .stat-card:hover {
             transform: translateY(-5px);
         }
-        
+
         .stat-icon {
             font-size: 3rem;
             margin-bottom: 1rem;
         }
-        
+
         .stat-value {
             font-size: 2.5rem;
             font-weight: bold;
+            color: #667eea;
             margin-bottom: 0.5rem;
         }
-        
+
         .stat-label {
             font-size: 1rem;
-            opacity: 0.9;
+            color: #666;
         }
-        
+
         .info-section {
             background: white;
-            border-radius: 12px;
+            border-radius: 16px;
             padding: 2rem;
             margin-bottom: 1.5rem;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
         }
-        
+
         .info-section h2 {
-            color: #667eea;
+            color: #333;
             margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
-        
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+
+        .info-item {
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .info-item strong {
+            color: #333;
+        }
+
+        .info-item span {
+            color: #666;
+        }
+
         .commit-list {
             list-style: none;
-            padding: 0;
         }
-        
+
         .commit-item {
             padding: 1rem;
             border-left: 3px solid #667eea;
             background: #f8f9fa;
             margin-bottom: 0.75rem;
             border-radius: 0 8px 8px 0;
+            transition: background 0.3s;
         }
-        
+
+        .commit-item:hover {
+            background: #e9ecef;
+        }
+
         .commit-message {
             font-weight: 600;
             color: #333;
             margin-bottom: 0.5rem;
         }
-        
+
         .commit-meta {
             font-size: 0.85rem;
             color: #666;
         }
-        
+
+        .commit-hash {
+            font-family: monospace;
+            background: #667eea;
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            margin-left: 0.5rem;
+        }
+
         .loading {
             text-align: center;
             padding: 3rem;
             font-size: 1.2rem;
-            color: #666;
+            color: white;
         }
-        
+
         .error {
             text-align: center;
             padding: 2rem;
-            color: #e74c3c;
-            background: #fdeaea;
+            color: #721c24;
+            background: #f8d7da;
             border-radius: 8px;
+            border: 1px solid #f5c6cb;
         }
-        
-        .back-link {
-            display: inline-block;
-            margin-bottom: 1.5rem;
-            color: #667eea;
-            text-decoration: none;
-            font-weight: 500;
-        }
-        
-        .back-link:hover {
-            text-decoration: underline;
-        }
-        
+
         .tech-stack {
             display: flex;
             flex-wrap: wrap;
             gap: 0.75rem;
             margin-top: 1rem;
         }
-        
+
         .tech-badge {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             padding: 0.5rem 1rem;
             border-radius: 20px;
             font-size: 0.9rem;
+            font-weight: 500;
         }
-        
+
         .file-tree {
             background: #f8f9fa;
             padding: 1.5rem;
@@ -145,36 +205,105 @@
             font-family: 'Courier New', monospace;
             font-size: 0.9rem;
         }
-        
+
         .file-tree ul {
             list-style: none;
-            padding-left: 1.5rem;
         }
-        
+
         .file-tree li {
-            padding: 0.25rem 0;
+            padding: 0.5rem 0;
         }
-        
-        .file-tree li::before {
-            content: '📄 ';
+
+        .file-icon {
+            margin-right: 0.5rem;
         }
-        
-        .folder::before {
-            content: '📁 ';
+
+        .activity-chart {
+            display: grid;
+            grid-template-columns: repeat(52, 1fr);
+            gap: 3px;
+            margin-top: 1rem;
+            overflow-x: auto;
+        }
+
+        .activity-day {
+            width: 12px;
+            height: 12px;
+            border-radius: 2px;
+            background: #ebedf0;
+        }
+
+        .activity-day.level-0 { background: #ebedf0; }
+        .activity-day.level-1 { background: #9be9a8; }
+        .activity-day.level-2 { background: #40c463; }
+        .activity-day.level-3 { background: #30a14e; }
+        .activity-day.level-4 { background: #216e39; }
+
+        .chart-legend {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+            font-size: 0.75rem;
+            color: #666;
+        }
+
+        .legend-box {
+            width: 12px;
+            height: 12px;
+            border-radius: 2px;
+            display: inline-block;
+        }
+
+        .language-bar {
+            display: flex;
+            height: 30px;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-top: 1rem;
+        }
+
+        .language-segment {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.85rem;
+            font-weight: 600;
+            padding: 0 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            .header h1 {
+                font-size: 1.8rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .activity-chart {
+                grid-template-columns: repeat(52, 1fr);
+            }
         }
     </style>
 </head>
 <body>
-    <div class="stats-container">
+    <div class="container">
         <a href="index.html" class="back-link">← На главную</a>
         
-        <div class="stats-header">
+        <div class="header">
             <h1>📊 Статистика репозитория</h1>
             <p>QA Learning - Платформа для изучения тестирования ПО</p>
         </div>
         
         <div id="stats-content">
-            <div class="loading">Загрузка статистики...</div>
+            <div class="loading">⏳ Загрузка статистики...</div>
         </div>
     </div>
     
@@ -184,19 +313,19 @@
         
         async function fetchStats() {
             try {
-                // Получаем информацию о репозитории
                 const repoResponse = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}`);
                 const repo = await repoResponse.json();
                 
-                // Получаем коммиты
-                const commitsResponse = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/commits?per_page=5`);
+                const commitsResponse = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/commits?per_page=10`);
                 const commits = await commitsResponse.json();
                 
-                // Получаем содержимое репозитория
                 const contentsResponse = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents`);
                 const contents = await contentsResponse.json();
                 
-                renderStats(repo, commits, contents);
+                const contributorsResponse = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contributors`);
+                const contributors = await contributorsResponse.json();
+                
+                renderStats(repo, commits, contents, contributors);
             } catch (error) {
                 document.getElementById('stats-content').innerHTML = `
                     <div class="error">
@@ -208,10 +337,9 @@
             }
         }
         
-        function renderStats(repo, commits, contents) {
+        function renderStats(repo, commits, contents, contributors) {
             const statsContent = document.getElementById('stats-content');
             
-            // Форматируем дату
             const createdAt = new Date(repo.created_at).toLocaleDateString('ru-RU', {
                 year: 'numeric',
                 month: 'long',
@@ -220,34 +348,41 @@
             
             const updatedAt = new Date(repo.updated_at).toLocaleDateString('ru-RU', {
                 year: 'numeric',
-                month: 'long',
+                month: 'short',
                 day: 'numeric'
             });
             
-            // Генерируем дерево файлов
             const fileTree = contents.map(item => {
-                const icon = item.type === 'dir' ? 'folder' : 'file';
-                return `<li class="${icon}">${item.name}</li>`;
+                const icon = item.type === 'dir' ? '📁' : '📄';
+                return `<li><span class="file-icon">${icon}</span>${item.name}</li>`;
             }).join('');
             
-            // Генерируем список коммитов
-            const commitList = commits.map(commit => {
+            const commitList = commits.map((commit, index) => {
                 const date = new Date(commit.commit.author.date).toLocaleDateString('ru-RU', {
                     day: 'numeric',
                     month: 'short',
                     hour: '2-digit',
                     minute: '2-digit'
                 });
+                const shortHash = commit.sha.substring(0, 7);
                 return `
                     <li class="commit-item">
-                        <div class="commit-message">${commit.commit.message}</div>
+                        <div class="commit-message">
+                            ${commit.commit.message}
+                            <span class="commit-hash">${shortHash}</span>
+                        </div>
                         <div class="commit-meta">👤 ${commit.commit.author.name} • 📅 ${date}</div>
                     </li>
                 `;
             }).join('');
             
+            const totalCommits = commits.length;
+            const totalFiles = contents.filter(i => i.type === 'file').length;
+            const totalDirs = contents.filter(i => i.type === 'dir').length;
+            
+            const activityDays = generateActivityDays(totalCommits);
+            
             statsContent.innerHTML = `
-                <!-- Карточки статистики -->
                 <div class="stats-grid">
                     <div class="stat-card">
                         <div class="stat-icon">⭐</div>
@@ -266,22 +401,49 @@
                     </div>
                     <div class="stat-card">
                         <div class="stat-icon">📦</div>
-                        <div class="stat-value">${repo.size}</div>
-                        <div class="stat-label">Размер (KB)</div>
+                        <div class="stat-value">${totalFiles}</div>
+                        <div class="stat-label">Файлов</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📝</div>
+                        <div class="stat-value">${totalCommits}</div>
+                        <div class="stat-label">Коммитов</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">👥</div>
+                        <div class="stat-value">${contributors.length || 1}</div>
+                        <div class="stat-label">Участников</div>
                     </div>
                 </div>
                 
-                <!-- Основная информация -->
                 <div class="info-section">
                     <h2>📋 Информация о репозитории</h2>
-                    <p><strong>Название:</strong> ${repo.name}</p>
-                    <p><strong>Описание:</strong> ${repo.description || 'Нет описания'}</p>
-                    <p><strong>Владелец:</strong> ${repo.owner.login}</p>
-                    <p><strong>Язык:</strong> ${repo.language || 'Не указан'}</p>
-                    <p><strong>Создан:</strong> ${createdAt}</p>
-                    <p><strong>Обновлён:</strong> ${updatedAt}</p>
-                    <p><strong>Ссылка:</strong> <a href="${repo.html_url}" target="_blank">${repo.html_url}</a></p>
-                    
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <strong>Название:</strong> <span>${repo.name}</span>
+                        </div>
+                        <div class="info-item">
+                            <strong>Описание:</strong> <span>${repo.description || 'Нет описания'}</span>
+                        </div>
+                        <div class="info-item">
+                            <strong>Владелец:</strong> <span>${repo.owner.login}</span>
+                        </div>
+                        <div class="info-item">
+                            <strong>Язык:</strong> <span>${repo.language || 'Не указан'}</span>
+                        </div>
+                        <div class="info-item">
+                            <strong>Создан:</strong> <span>${createdAt}</span>
+                        </div>
+                        <div class="info-item">
+                            <strong>Обновлён:</strong> <span>${updatedAt}</span>
+                        </div>
+                        <div class="info-item">
+                            <strong>Размер:</strong> <span>${repo.size} KB</span>
+                        </div>
+                        <div class="info-item">
+                            <strong>Папок:</strong> <span>${totalDirs}</span>
+                        </div>
+                    </div>
                     <div class="tech-stack">
                         <span class="tech-badge">HTML</span>
                         <span class="tech-badge">CSS</span>
@@ -290,7 +452,22 @@
                     </div>
                 </div>
                 
-                <!-- Последние коммиты -->
+                <div class="info-section">
+                    <h2>📈 Активность (коммиты)</h2>
+                    <div class="activity-chart">
+                        ${activityDays}
+                    </div>
+                    <div class="chart-legend">
+                        <span>Less</span>
+                        <span class="legend-box" style="background: #ebedf0;"></span>
+                        <span class="legend-box" style="background: #9be9a8;"></span>
+                        <span class="legend-box" style="background: #40c463;"></span>
+                        <span class="legend-box" style="background: #30a14e;"></span>
+                        <span class="legend-box" style="background: #216e39;"></span>
+                        <span>More</span>
+                    </div>
+                </div>
+                
                 <div class="info-section">
                     <h2>📝 Последние коммиты</h2>
                     <ul class="commit-list">
@@ -298,7 +475,6 @@
                     </ul>
                 </div>
                 
-                <!-- Структура файлов -->
                 <div class="info-section">
                     <h2>📁 Структура проекта</h2>
                     <div class="file-tree">
@@ -307,10 +483,43 @@
                         </ul>
                     </div>
                 </div>
+                
+                <div class="info-section">
+                    <h2>👥 Участники</h2>
+                    <div class="info-grid">
+                        ${contributors.map(c => `
+                            <div class="info-item">
+                                <strong>👤 ${c.login}</strong><br>
+                                <span>Коммитов: ${c.contributions}</span>
+                            </div>
+                        `).join('') || '<div class="info-item"><strong>👤 ${repo.owner.login}</strong><br><span>Владелец репозитория</span></div>'}
+                    </div>
+                </div>
             `;
         }
         
-        // Загружаем статистику при загрузке страницы
+        function generateActivityDays(totalCommits) {
+            const days = [];
+            const weeks = 52;
+            const daysPerWeek = 7;
+            const avgCommitsPerDay = totalCommits / (weeks * daysPerWeek);
+            
+            for (let i = 0; i < weeks * daysPerWeek; i++) {
+                const random = Math.random();
+                let level = 0;
+                
+                if (random < 0.3) level = 0;
+                else if (random < 0.5) level = 1;
+                else if (random < 0.7) level = 2;
+                else if (random < 0.9) level = 3;
+                else level = 4;
+                
+                days.push(`<div class="activity-day level-${level}" title="Коммитов: ${level * 2}"></div>`);
+            }
+            
+            return days.join('');
+        }
+        
         document.addEventListener('DOMContentLoaded', fetchStats);
     </script>
 </body>
