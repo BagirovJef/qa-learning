@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QA Learning - Статистика</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .stats-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .stats-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .stats-header h1 {
+            color: #667eea;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            transition: transform 0.3s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+        
+        .info-section {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .info-section h2 {
+            color: #667eea;
+            margin-bottom: 1.5rem;
+        }
+        
+        .commit-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .commit-item {
+            padding: 1rem;
+            border-left: 3px solid #667eea;
+            background: #f8f9fa;
+            margin-bottom: 0.75rem;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .commit-message {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+        
+        .commit-meta {
+            font-size: 0.85rem;
+            color: #666;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            font-size: 1.2rem;
+            color: #666;
+        }
+        
+        .error {
+            text-align: center;
+            padding: 2rem;
+            color: #e74c3c;
+            background: #fdeaea;
+            border-radius: 8px;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-bottom: 1.5rem;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+        
+        .tech-badge {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+        
+        .file-tree {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+        
+        .file-tree ul {
+            list-style: none;
+            padding-left: 1.5rem;
+        }
+        
+        .file-tree li {
+            padding: 0.25rem 0;
+        }
+        
+        .file-tree li::before {
+            content: '📄 ';
+        }
+        
+        .folder::before {
+            content: '📁 ';
+        }
+    </style>
+</head>
+<body>
+    <div class="stats-container">
+        <a href="index.html" class="back-link">← На главную</a>
+        
+        <div class="stats-header">
+            <h1>📊 Статистика репозитория</h1>
+            <p>QA Learning - Платформа для изучения тестирования ПО</p>
+        </div>
+        
+        <div id="stats-content">
+            <div class="loading">Загрузка статистики...</div>
+        </div>
+    </div>
+    
+    <script>
+        const REPO_OWNER = 'BagirovJef';
+        const REPO_NAME = 'qa-learning';
+        
+        async function fetchStats() {
+            try {
+                // Получаем информацию о репозитории
+                const repoResponse = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}`);
+                const repo = await repoResponse.json();
+                
+                // Получаем коммиты
+                const commitsResponse = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/commits?per_page=5`);
+                const commits = await commitsResponse.json();
+                
+                // Получаем содержимое репозитория
+                const contentsResponse = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents`);
+                const contents = await contentsResponse.json();
+                
+                renderStats(repo, commits, contents);
+            } catch (error) {
+                document.getElementById('stats-content').innerHTML = `
+                    <div class="error">
+                        <h3>⚠️ Ошибка загрузки</h3>
+                        <p>Не удалось загрузить статистику. Попробуйте позже.</p>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+        
+        function renderStats(repo, commits, contents) {
+            const statsContent = document.getElementById('stats-content');
+            
+            // Форматируем дату
+            const createdAt = new Date(repo.created_at).toLocaleDateString('ru-RU', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            
+            const updatedAt = new Date(repo.updated_at).toLocaleDateString('ru-RU', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            
+            // Генерируем дерево файлов
+            const fileTree = contents.map(item => {
+                const icon = item.type === 'dir' ? 'folder' : 'file';
+                return `<li class="${icon}">${item.name}</li>`;
+            }).join('');
+            
+            // Генерируем список коммитов
+            const commitList = commits.map(commit => {
+                const date = new Date(commit.commit.author.date).toLocaleDateString('ru-RU', {
+                    day: 'numeric',
+                    month: 'short',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                return `
+                    <li class="commit-item">
+                        <div class="commit-message">${commit.commit.message}</div>
+                        <div class="commit-meta">👤 ${commit.commit.author.name} • 📅 ${date}</div>
+                    </li>
+                `;
+            }).join('');
+            
+            statsContent.innerHTML = `
+                <!-- Карточки статистики -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">⭐</div>
+                        <div class="stat-value">${repo.stargazers_count}</div>
+                        <div class="stat-label">Звёзд</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🍴</div>
+                        <div class="stat-value">${repo.forks_count}</div>
+                        <div class="stat-label">Форков</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">👁️</div>
+                        <div class="stat-value">${repo.watchers_count}</div>
+                        <div class="stat-label">Наблюдающих</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📦</div>
+                        <div class="stat-value">${repo.size}</div>
+                        <div class="stat-label">Размер (KB)</div>
+                    </div>
+                </div>
+                
+                <!-- Основная информация -->
+                <div class="info-section">
+                    <h2>📋 Информация о репозитории</h2>
+                    <p><strong>Название:</strong> ${repo.name}</p>
+                    <p><strong>Описание:</strong> ${repo.description || 'Нет описания'}</p>
+                    <p><strong>Владелец:</strong> ${repo.owner.login}</p>
+                    <p><strong>Язык:</strong> ${repo.language || 'Не указан'}</p>
+                    <p><strong>Создан:</strong> ${createdAt}</p>
+                    <p><strong>Обновлён:</strong> ${updatedAt}</p>
+                    <p><strong>Ссылка:</strong> <a href="${repo.html_url}" target="_blank">${repo.html_url}</a></p>
+                    
+                    <div class="tech-stack">
+                        <span class="tech-badge">HTML</span>
+                        <span class="tech-badge">CSS</span>
+                        <span class="tech-badge">JavaScript</span>
+                        <span class="tech-badge">GitHub Pages</span>
+                    </div>
+                </div>
+                
+                <!-- Последние коммиты -->
+                <div class="info-section">
+                    <h2>📝 Последние коммиты</h2>
+                    <ul class="commit-list">
+                        ${commitList}
+                    </ul>
+                </div>
+                
+                <!-- Структура файлов -->
+                <div class="info-section">
+                    <h2>📁 Структура проекта</h2>
+                    <div class="file-tree">
+                        <ul>
+                            ${fileTree}
+                        </ul>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Загружаем статистику при загрузке страницы
+        document.addEventListener('DOMContentLoaded', fetchStats);
+    </script>
+</body>
+</html>

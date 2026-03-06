@@ -34,6 +34,27 @@ h1 {
     margin-bottom: 1.5rem;
 }
 
+/* Header links */
+.header-links {
+    margin-bottom: 1.5rem;
+}
+
+.stats-link {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    text-decoration: none;
+    border-radius: 25px;
+    font-weight: 500;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.stats-link:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
+
 /* Tabs */
 #section-tabs {
     margin-bottom: 1.5rem;
