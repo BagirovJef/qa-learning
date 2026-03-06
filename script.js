@@ -1138,6 +1138,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="flashcard-front">
                         <div class="flashcard-icon">❓</div>
                         <div class="flashcard-question">${q.q}</div>
+                        <div class="flashcard-hint">↻ Нажмите для ответа</div>
                     </div>
                     <div class="flashcard-back">
                         <div class="flashcard-icon">💡</div>
