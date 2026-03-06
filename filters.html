@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QA Learning - Фильтры</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        .container {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #333;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .filter-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .filter-label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #666;
+            margin-bottom: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .filter-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
+        }
+
+        .filter-option {
+            position: relative;
+        }
+
+        .filter-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .filter-option label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 0.5rem;
+            background: #f5f5f5;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #666;
+            transition: all 0.3s ease;
+            text-align: center;
+            min-height: 50px;
+        }
+
+        .filter-option label:hover {
+            background: #e8e8e8;
+            border-color: #ccc;
+        }
+
+        .filter-option input[type="radio"]:checked + label {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-color: #667eea;
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .filter-option input[type="checkbox"] {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .filter-option input[type="checkbox"]:checked + label {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-color: #667eea;
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            padding: 1rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-reset {
+            background: #f5f5f5;
+            color: #666;
+            border: 2px solid #e0e0e0;
+        }
+
+        .btn-reset:hover {
+            background: #e8e8e8;
+            border-color: #ccc;
+        }
+
+        .btn-apply {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+        }
+
+        .btn-apply:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-apply:active {
+            transform: translateY(0);
+        }
+
+        /* Счётчики */
+        .counters {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+
+        .counter {
+            text-align: center;
+            padding: 0.5rem;
+            background: #f8f9fa;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            color: #666;
+        }
+
+        .counter-value {
+            display: block;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        /* Результаты */
+        .results {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .results.active {
+            display: block;
+        }
+
+        .results h3 {
+            font-size: 1rem;
+            color: #333;
+            margin-bottom: 1rem;
+        }
+
+        .results-list {
+            list-style: none;
+        }
+
+        .results-item {
+            padding: 0.75rem;
+            background: white;
+            border-radius: 6px;
+            margin-bottom: 0.5rem;
+            border-left: 3px solid #667eea;
+        }
+
+        .results-item strong {
+            color: #333;
+        }
+
+        .results-item span {
+            color: #666;
+            font-size: 0.85rem;
+        }
+
+        /* Адаптив */
+        @media (max-width: 480px) {
+            .container {
+                padding: 1.5rem;
+            }
+
+            .filter-options {
+                grid-template-columns: 1fr;
+            }
+
+            .buttons {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Фильтры</h1>
+        </div>
+
+        <!-- Фильтр: Статус -->
+        <div class="filter-group">
+            <div class="filter-label">Статус</div>
+            <div class="filter-options">
+                <div class="filter-option">
+                    <input type="radio" name="status" id="status-new" value="new">
+                    <label for="status-new">🆕<br>Новые</label>
+                </div>
+                <div class="filter-option">
+                    <input type="radio" name="status" id="status-study" value="study">
+                    <label for="status-study">📖<br>Изучаются</label>
+                </div>
+                <div class="filter-option">
+                    <input type="radio" name="status" id="status-repeat" value="repeat">
+                    <label for="status-repeat">🔁<br>Повторение</label>
+                </div>
+            </div>
+            <div class="counters">
+                <div class="counter">
+                    <span class="counter-value" id="count-new">0</span>
+                    новых
+                </div>
+                <div class="counter">
+                    <span class="counter-value" id="count-study">0</span>
+                    изучаются
+                </div>
+                <div class="counter">
+                    <span class="counter-value" id="count-repeat">0</span>
+                    повторение
+                </div>
+            </div>
+        </div>
+
+        <!-- Фильтр: Сложность -->
+        <div class="filter-group">
+            <div class="filter-label">Сложность</div>
+            <div class="filter-options">
+                <div class="filter-option">
+                    <input type="checkbox" name="difficulty" id="diff-easy" value="easy">
+                    <label for="diff-easy">💚<br>Легко</label>
+                </div>
+                <div class="filter-option">
+                    <input type="checkbox" name="difficulty" id="diff-medium" value="medium">
+                    <label for="diff-medium">💛<br>Средне</label>
+                </div>
+                <div class="filter-option">
+                    <input type="checkbox" name="difficulty" id="diff-hard" value="hard">
+                    <label for="diff-hard">❤️<br>Сложно</label>
+                </div>
+            </div>
+            <div class="counters">
+                <div class="counter">
+                    <span class="counter-value" id="count-easy">0</span>
+                    легко
+                </div>
+                <div class="counter">
+                    <span class="counter-value" id="count-medium">0</span>
+                    средне
+                </div>
+                <div class="counter">
+                    <span class="counter-value" id="count-hard">0</span>
+                    сложно
+                </div>
+            </div>
+        </div>
+
+        <!-- Кнопки -->
+        <div class="buttons">
+            <button class="btn btn-reset" onclick="resetFilters()">Сбросить</button>
+            <button class="btn btn-apply" onclick="applyFilters()">Применить</button>
+        </div>
+
+        <!-- Результаты -->
+        <div class="results" id="results">
+            <h3>📋 Результаты фильтрации:</h3>
+            <ul class="results-list" id="results-list"></ul>
+        </div>
+    </div>
+
+    <script>
+        // Данные карточек (можно расширять)
+        const flashcardsData = [
+            { id: 1, question: 'Что такое Swagger?', answer: 'Инструмент для документирования API', status: 'study', difficulty: 'easy' },
+            { id: 2, question: 'Что такое Postman?', answer: 'Инструмент для тестирования API', status: 'study', difficulty: 'easy' },
+            { id: 3, question: 'Что такое Kibana?', answer: 'Визуализация и анализ логов', status: 'repeat', difficulty: 'medium' },
+            { id: 4, question: 'Что такое Kafka?', answer: 'Брокер сообщений для асинхронной коммуникации', status: 'new', difficulty: 'hard' },
+            { id: 5, question: 'Что такое Fiddler?', answer: 'Прокси для перехвата трафика', status: 'study', difficulty: 'medium' },
+            { id: 6, question: 'Что такое Docker?', answer: 'Контейнеризация приложений', status: 'repeat', difficulty: 'hard' },
+            { id: 7, question: 'Что такое Kubernetes?', answer: 'Оркестрация контейнеров', status: 'new', difficulty: 'hard' },
+            { id: 8, question: 'Что такое CI/CD?', answer: 'Непрерывная интеграция и доставка', status: 'study', difficulty: 'medium' },
+            { id: 9, question: 'Что такое DevTools?', answer: 'Инструменты разработчика в браузере', status: 'repeat', difficulty: 'easy' },
+            { id: 10, question: 'Что такое тестирование?', answer: 'Оценка качества системы', status: 'repeat', difficulty: 'easy' },
+            { id: 11, question: 'Виды тестирования', answer: 'Функциональное, нефункциональное, связанное с изменениями', status: 'study', difficulty: 'medium' },
+            { id: 12, question: 'Методы тест-дизайна', answer: 'Эквивалентное разделение, граничные значения и др.', status: 'new', difficulty: 'hard' },
+            { id: 13, question: 'REST vs SOAP', answer: 'REST — архитектурный стиль, SOAP — протокол', status: 'study', difficulty: 'medium' },
+            { id: 14, question: 'HTTP-методы', answer: 'GET, POST, PUT, PATCH, DELETE', status: 'repeat', difficulty: 'easy' },
+            { id: 15, question: 'Что такое SQL?', answer: 'Язык структурированных запросов', status: 'new', difficulty: 'medium' },
+            { id: 16, question: 'Что такое JOIN?', answer: 'Объединение данных из таблиц', status: 'study', difficulty: 'medium' },
+            { id: 17, question: 'Клиент-сервер', answer: 'Модель сети с разделением ответственности', status: 'repeat', difficulty: 'easy' },
+            { id: 18, question: 'Микросервисы', answer: 'Архитектура из независимых сервисов', status: 'new', difficulty: 'hard' },
+            { id: 19, question: 'Идентификация', answer: 'Процесс определения кто вы есть', status: 'repeat', difficulty: 'easy' },
+            { id: 20, question: 'Аутентификация', answer: 'Проверка что вы тот, кем представляетесь', status: 'study', difficulty: 'easy' },
+            { id: 21, question: 'Авторизация', answer: 'Определение что вы можете делать', status: 'study', difficulty: 'easy' },
+        ];
+
+        // Инициализация
+        document.addEventListener('DOMContentLoaded', () => {
+            updateCounters();
+        });
+
+        // Обновление счётчиков
+        function updateCounters() {
+            const statusCounts = { new: 0, study: 0, repeat: 0 };
+            const difficultyCounts = { easy: 0, medium: 0, hard: 0 };
+
+            flashcardsData.forEach(card => {
+                statusCounts[card.status]++;
+                difficultyCounts[card.difficulty]++;
+            });
+
+            document.getElementById('count-new').textContent = statusCounts.new;
+            document.getElementById('count-study').textContent = statusCounts.study;
+            document.getElementById('count-repeat').textContent = statusCounts.repeat;
+
+            document.getElementById('count-easy').textContent = difficultyCounts.easy;
+            document.getElementById('count-medium').textContent = difficultyCounts.medium;
+            document.getElementById('count-hard').textContent = difficultyCounts.hard;
+        }
+
+        // Сброс фильтров
+        function resetFilters() {
+            // Сброс статусов
+            document.querySelectorAll('input[name="status"]').forEach(input => {
+                input.checked = false;
+            });
+
+            // Сброс сложности
+            document.querySelectorAll('input[name="difficulty"]').forEach(input => {
+                input.checked = false;
+            });
+
+            // Скрыть результаты
+            document.getElementById('results').classList.remove('active');
+
+            // Обновить счётчики
+            updateCounters();
+        }
+
+        // Применение фильтров
+        function applyFilters() {
+            const selectedStatus = document.querySelector('input[name="status"]:checked');
+            const selectedDifficulties = document.querySelectorAll('input[name="difficulty"]:checked');
+
+            let filtered = flashcardsData;
+
+            // Фильтр по статусу
+            if (selectedStatus) {
+                filtered = filtered.filter(card => card.status === selectedStatus.value);
+            }
+
+            // Фильтр по сложности
+            if (selectedDifficulties.length > 0) {
+                const difficulties = Array.from(selectedDifficulties).map(input => input.value);
+                filtered = filtered.filter(card => difficulties.includes(card.difficulty));
+            }
+
+            showResults(filtered);
+        }
+
+        // Показ результатов
+        function showResults(cards) {
+            const resultsDiv = document.getElementById('results');
+            const resultsList = document.getElementById('results-list');
+
+            if (cards.length === 0) {
+                resultsList.innerHTML = '<li class="results-item">Ничего не найдено</li>';
+            } else {
+                resultsList.innerHTML = cards.map(card => `
+                    <li class="results-item">
+                        <strong>${card.question}</strong><br>
+                        <span>${card.answer}</span><br>
+                        <span style="font-size: 0.75rem; color: #999;">
+                            Статус: ${getStatusName(card.status)} | 
+                            Сложность: ${getDifficultyName(card.difficulty)}
+                        </span>
+                    </li>
+                `).join('');
+            }
+
+            resultsDiv.classList.add('active');
+        }
+
+        function getStatusName(status) {
+            const names = {
+                new: '🆕 Новые',
+                study: '📖 Изучаются',
+                repeat: '🔁 Повторение'
+            };
+            return names[status] || status;
+        }
+
+        function getDifficultyName(difficulty) {
+            const names = {
+                easy: '💚 Легко',
+                medium: '💛 Средне',
+                hard: '❤️ Сложно'
+            };
+            return names[difficulty] || difficulty;
+        }
+    </script>
+</body>
+</html>

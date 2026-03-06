@@ -37,6 +37,10 @@ h1 {
 /* Header links */
 .header-links {
     margin-bottom: 1.5rem;
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
 }
 
 .stats-link {
